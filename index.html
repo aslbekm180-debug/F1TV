@@ -206,30 +206,136 @@
     // PLAY BUTTON
 
     document
-    .getElementById("playButton")
-    .addEventListener("click", function () {
 
-        const videoBox =
-            document.getElementById("videoBox");
+        .getElementById("playButton")
 
-        const player =
-            document.getElementById("videoPlayer");
+        .addEventListener(
 
+            "click",
 
-        player.src =
-            "https://vkvideo.ru/video-226252875_456239669";
+            async function () {
 
 
-        videoBox.style.display = "block";
+                const player =
+
+                    document
+
+                    .getElementById(
+
+                        "videoPlayer"
+
+                    );
 
 
-        if (videoBox.requestFullscreen) {
+                const videoBox =
 
-            videoBox.requestFullscreen();
+                    document
 
-        }
+                    .getElementById(
 
-    });
+                        "videoBox"
+
+                    );
+
+
+                const app =
+
+                    document
+
+                    .getElementById(
+
+                        "app"
+
+                    );
+
+
+                // VK VIDEO
+
+                player.src =
+
+                    "https://vkvideo.ru/video_ext.php"
+
+                    + "?oid=-226252875"
+
+                    + "&id=456239669"
+
+                    + "&autoplay=1";
+
+
+                // Video ko‘rsatish
+
+                videoBox.style.display =
+
+                    "block";
+
+
+                // Fullscreen
+
+                try {
+
+
+                    if (
+
+                        app.requestFullscreen
+
+                    ) {
+
+                        await app.requestFullscreen();
+
+                    }
+
+
+                }
+
+                catch (error) {
+
+                    console.log(
+
+                        "Fullscreen is not supported"
+
+                    );
+
+                }
+
+
+                // Landscape
+
+                try {
+
+
+                    if (
+
+                        screen.orientation &&
+
+                        screen.orientation.lock
+
+                    ) {
+
+                        await screen.orientation.lock(
+
+                            "landscape"
+
+                        );
+
+                    }
+
+
+                }
+
+                catch (error) {
+
+                    console.log(
+
+                        "Landscape is not supported"
+
+                    );
+
+                }
+
+
+            }
+
+        );
 
 
 </script>
