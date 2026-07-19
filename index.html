@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>F1 Explore TV</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #250000;
+    color: white;
+}
+
+.app {
+    width: 100%;
+    max-width: 700px;
+    margin: auto;
+    padding: 15px;
+}
+
+.header {
+    text-align: center;
+    padding: 20px 0 25px;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #ff2020;
+}
+
+.admin-panel {
+    display: none;
+    background: #3d0808;
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-panel h2 {
+    margin-bottom: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    border: none;
+    outline: none;
+    border-radius: 9px;
+    background: #1d0000;
+    color: white;
+    font-size: 15px;
+}
+
+input::placeholder {
+    color: #c8aaaa;
+}
+
+.publish-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 9px;
+    background: #df0000;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.race-soon {
+    text-align: center;
+    padding: 65px 15px;
+    border-radius: 16px;
+    background: #3d0808;
+}
+
+.race-soon h1 {
+    font-size: 26px;
+    margin-bottom: 12px;
+}
+
+.race-soon p {
+    color: #c9aaaa;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #d0aaaa;
+}
+
+.error {
+    padding: 30px 15px;
+    text-align: center;
+    border-radius: 16px;
+    background: #3d0808;
+    color: #ffaaaa;
+    word-break: break-word;
+}
+
+.live-card {
+    overflow: hidden;
+    border-radius: 16px;
+    background: #3d0808;
+    margin-bottom: 20px;
+}
+
+.player {
+    display: block;
+    width: 100%;
+    height: 390px;
+    border: none;
+    background: black;
+}
+
+.live-info {
+    padding: 15px;
+}
+
+.live-title {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 12px 5px;
+    border: none;
+    border-radius: 9px;
+    background: #591515;
+    color: white;
+    cursor: pointer;
+}
+
+.action-btn.active {
+    background: #b00000;
+}
+
+.report-btn,
+.delete-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.report-btn {
+    background: #260000;
+    color: #ffaaaa;
+}
+
+.delete-btn {
+    background: #760000;
+    color: white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+
+<div class="logo">
+
+🏁 F1 <span>Explore</span> TV
+
+</div>
+
+</header>
+
+<section id="adminPanel" class="admin-panel">
+
+<h2>🔐 Admin Panel</h2>
+
+<input
+id="liveName"
+type="text"
+placeholder="Live title"
+>
+
+<input
+id="liveLink"
+type="text"
+placeholder="VK Video link"
+>
+
+<button
+id="publishButton"
+class="publish-btn"
+>
+
+🔴 Publish Live
+
+</button>
+
+</section>
+
+<main id="content">
+
+<div class="loading">
+
+Loading...
+
+</div>
+
+</main>
+
+</div>
+
+<script type="module">
+
+import {
+
+initializeApp
+
+}
+
+from
+
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+
+import {
+
+getFirestore,
+
+collection,
+
+addDoc,
+
+deleteDoc,
+
+doc,
+
+onSnapshot
+
+}
+
+from
+
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+apiKey:
+
+"AIzaSyCNyFkMtsV8nqZSOdLFbHZMSNE5wQgKGa0",
+
+authDomain:
+
+"f1exploretv.firebaseapp.com",
+
+projectId:
+
+"f1exploretv",
+
+storageBucket:
+
+"f1exploretv.firebasestorage.app",
+
+messagingSenderId:
+
+"930316875177",
+
+appId:
+
+"1:930316875177:web:e13a5ac9ba085f6d3680b8"
+
+};
+
+
+const firebaseApp =
+
+initializeApp(
+
+firebaseConfig
+
+);
+
+
+const db =
+
+getFirestore(
+
+firebaseApp
+
+);
+
+
+const telegram =
+
+window.Telegram.WebApp;
+
+
+telegram.ready();
+
+
+telegram.expand();
+
+
+const ADMIN_ID =
+
+2066322228;
+
+
+const BOT_LINK =
+
+"https://t.me/F1ExploreBot";
+
+
+const REPORT_LINK =
+
+"https://t.me/aslbek201";
+
+
+const telegramUser =
+
+telegram.initDataUnsafe?.user;
+
+
+const isAdmin =
+
+telegramUser &&
+
+Number(
+
+telegramUser.id
+
+) === ADMIN_ID;
+
+
+if (isAdmin) {
+
+document
+
+.getElementById(
+
+"adminPanel"
+
+)
+
+.style.display =
+
+"block";
+
+}
+
+
+document
+
+.getElementById(
+
+"publishButton"
+
+)
+
+.addEventListener(
+
+"click",
+
+async function() {
+
+
+const title =
+
+document
+
+.getElementById(
+
+"liveName"
+
+)
+
+.value
+
+.trim();
+
+
+const link =
+
+document
+
+.getElementById(
+
+"liveLink"
+
+)
+
+.value
+
+.trim();
+
+
+if (
+
+title === "" ||
+
+link === ""
+
+) {
+
+alert(
+
+"Please enter the live title and link."
+
+);
+
+return;
+
+}
+
+
+try {
+
+
+await addDoc(
+
+collection(
+
+db,
+
+"lives"
+
+),
+
+{
+
+title:
+
+title,
+
+link:
+
+link,
+
+createdAt:
+
+Date.now()
+
+}
+
+);
+
+
+document
+
+.getElementById(
+
+"liveName"
+
+)
+
+.value = "";
+
+
+document
+
+.getElementById(
+
+"liveLink"
+
+)
+
+.value = "";
+
+
+alert(
+
+"Live published successfully!"
+
+);
+
+
+}
+
+catch (
+
+error
+
+) {
+
+
+console.error(
+
+error
+
+);
+
+
+alert(
+
+"Firebase error: "
+
++
+
+error.message
+
+);
+
+
+}
+
+}
+
+);
+
+
+onSnapshot(
+
+collection(
+
+db,
+
+"lives"
+
+),
+
+function(snapshot) {
+
+
+const content =
+
+document
+
+.getElementById(
+
+"content"
+
+);
+
+
+content.innerHTML = "";
+
+
+if (
+
+snapshot.empty
+
+) {
+
+
+content.innerHTML = `
+
+<div class="race-soon">
+
+<h1>
+
+Race Starts Soon 🏁
+
+</h1>
+
+<p>
+
+Stay tuned for the next live race.
+
+</p>
+
+</div>
+
+`;
+
+
+return;
+
+}
+
+
+snapshot.forEach(
+
+function(
+
+documentSnapshot
+
+) {
+
+
+const live =
+
+documentSnapshot
+
+.data();
+
+
+const liveId =
+
+documentSnapshot
+
+.id;
+
+
+const card =
+
+document
+
+.createElement(
+
+"div"
+
+);
+
+
+card
+
+.className =
+
+"live-card";
+
+
+card.innerHTML = `
+
+<iframe
+
+class="player"
+
+src="${live.link}"
+
+allow="autoplay; fullscreen"
+
+allowfullscreen>
+
+</iframe>
+
+<div class="live-info">
+
+<div class="live-title">
+
+🔴 ${escapeHTML(
+
+live.title
+
+)}
+
+</div>
+
+<div class="actions">
+
+<button
+
+class="action-btn"
+
+onclick="likeLive(this)"
+
+>
+
+👍 Like
+
+</button>
+
+<button
+
+class="action-btn"
+
+onclick="dislikeLive(this)"
+
+>
+
+👎 Dislike
+
+</button>
+
+<button
+
+class="action-btn"
+
+onclick="shareLive()"
+
+>
+
+🔗 Share
+
+</button>
+
+</div>
+
+<button
+
+class="report-btn"
+
+onclick="reportLive()"
+
+>
+
+🚨 Report
+
+</button>
+
+</div>
+
+`;
+
+
+if (
+
+isAdmin
+
+) {
+
+
+const deleteButton =
+
+document
+
+.createElement(
+
+"button"
+
+);
+
+
+deleteButton
+
+.className =
+
+"delete-btn";
+
+
+deleteButton
+
+.innerText =
+
+"🗑 Delete Live";
+
+
+deleteButton.onclick =
+
+async function() {
+
+
+await deleteDoc(
+
+doc(
+
+db,
+
+"lives",
+
+liveId
+
+)
+
+);
+
+
+};
+
+
+card
+
+.querySelector(
+
+".live-info"
+
+)
+
+.appendChild(
+
+deleteButton
+
+);
+
+
+}
+
+
+content
+
+.appendChild(
+
+card
+
+);
+
+
+}
+
+);
+
+
+},
+
+function(error) {
+
+
+console.error(
+
+error
+
+);
+
+
+document
+
+.getElementById(
+
+"content"
+
+)
+
+.innerHTML = `
+
+<div class="error">
+
+<h2>
+
+Firebase Error
+
+</h2>
+
+<br>
+
+<p>
+
+${escapeHTML(
+
+error.message
+
+)}
+
+</p>
+
+</div>
+
+`;
+
+
+}
+
+);
+
+
+window.likeLive =
+
+function(button) {
+
+
+button
+
+.classList
+
+.toggle(
+
+"active"
+
+);
+
+
+button
+
+.parentElement
+
+.children[1]
+
+.classList
+
+.remove(
+
+"active"
+
+);
+
+
+};
+
+
+window.dislikeLive =
+
+function(button) {
+
+
+button
+
+.classList
+
+.toggle(
+
+"active"
+
+);
+
+
+button
+
+.parentElement
+
+.children[0]
+
+.classList
+
+.remove(
+
+"active"
+
+);
+
+
+};
+
+
+window.shareLive =
+
+async function() {
+
+
+try {
+
+
+await navigator
+
+.clipboard
+
+.writeText(
+
+BOT_LINK
+
+);
+
+
+alert(
+
+"Bot link copied!"
+
+);
+
+
+}
+
+catch (
+
+error
+
+) {
+
+
+alert(
+
+BOT_LINK
+
+);
+
+
+}
+
+
+};
+
+
+window.reportLive =
+
+function() {
+
+
+window
+
+.open(
+
+REPORT_LINK,
+
+"_blank"
+
+);
+
+
+};
+
+
+function escapeHTML(
+
+text
+
+) {
+
+
+return String(
+
+text
+
+)
+
+.replace(
+
+/&/g,
+
+"&amp;"
+
+)
+
+.replace(
+
+/</g,
+
+"&lt;"
+
+)
+
+.replace(
+
+/>/g,
+
+"&gt;"
+
+)
+
+.replace(
+
+/"/g,
+
+"&quot;"
+
+)
+
+.replace(
+
+/'/g,
+
+"&#039;"
+
+);
+
+
+}
+
+
+</script>
+
+</body>
+
+</html>
