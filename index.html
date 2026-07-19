@@ -1,1060 +1,545 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <title>Video Player</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<title>F1 Explore TV</title>
+    <style>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-<style>
+        body {
+            background: #101010;
+            color: white;
+            padding: 20px;
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
 
-body {
-    min-height: 100vh;
-    background: #250000;
-    color: white;
-}
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-.app {
-    width: 100%;
-    max-width: 700px;
-    margin: auto;
-    padding: 15px;
-}
+        input {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            outline: none;
+            border-radius: 10px;
+            background: #242424;
+            color: white;
+            font-size: 15px;
+        }
 
-.header {
-    text-align: center;
-    padding: 20px 0 25px;
-}
+        button {
+            width: 100%;
+            padding: 16px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #229ed9;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-.logo {
-    font-size: 26px;
-    font-weight: bold;
-}
+        button:hover {
+            opacity: 0.8;
+        }
 
-.logo span {
-    color: #ff2020;
-}
+        .video-box {
+            display: none;
+            margin-top: 25px;
+        }
 
-.admin-panel {
-    display: none;
-    background: #3d0808;
-    padding: 16px;
-    border-radius: 16px;
-    margin-bottom: 20px;
-}
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 15px;
+            background: black;
+        }
 
-.admin-panel h2 {
-    margin-bottom: 10px;
-}
+        .error {
+            color: #ff5555;
+            text-align: center;
+            margin-top: 15px;
+        }
 
-input {
-    width: 100%;
-    padding: 14px;
-    margin-top: 10px;
-    border: none;
-    outline: none;
-    border-radius: 9px;
-    background: #1d0000;
-    color: white;
-    font-size: 15px;
-}
+        .close-btn {
+            background: #333;
+        }
 
-input::placeholder {
-    color: #c8aaaa;
-}
+        @media (max-width: 600px) {
 
-.publish-btn {
-    width: 100%;
-    padding: 14px;
-    margin-top: 12px;
-    border: none;
-    border-radius: 9px;
-    background: #df0000;
-    color: white;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-}
+            iframe {
+                height: 230px;
+            }
 
-.race-soon {
-    text-align: center;
-    padding: 65px 15px;
-    border-radius: 16px;
-    background: #3d0808;
-}
+        }
 
-.race-soon h1 {
-    font-size: 26px;
-    margin-bottom: 12px;
-}
-
-.race-soon p {
-    color: #c9aaaa;
-}
-
-.loading {
-    text-align: center;
-    padding: 50px;
-    color: #d0aaaa;
-}
-
-.error {
-    padding: 30px 15px;
-    text-align: center;
-    border-radius: 16px;
-    background: #3d0808;
-    color: #ffaaaa;
-    word-break: break-word;
-}
-
-.live-card {
-    overflow: hidden;
-    border-radius: 16px;
-    background: #3d0808;
-    margin-bottom: 20px;
-}
-
-.player {
-    display: block;
-    width: 100%;
-    height: 390px;
-    border: none;
-    background: black;
-}
-
-.live-info {
-    padding: 15px;
-}
-
-.live-title {
-    margin-bottom: 15px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.actions {
-    display: flex;
-    gap: 8px;
-}
-
-.action-btn {
-    flex: 1;
-    padding: 12px 5px;
-    border: none;
-    border-radius: 9px;
-    background: #591515;
-    color: white;
-    cursor: pointer;
-}
-
-.action-btn.active {
-    background: #b00000;
-}
-
-.report-btn,
-.delete-btn {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 9px;
-    cursor: pointer;
-}
-
-.report-btn {
-    background: #260000;
-    color: #ffaaaa;
-}
-
-.delete-btn {
-    background: #760000;
-    color: white;
-}
-
-</style>
+    </style>
 
 </head>
 
+
 <body>
 
-<div class="app">
 
-<header class="header">
+    <div class="container">
 
-<div class="logo">
 
-🏁 F1 <span>Explore</span> TV
+        <h1>🎬 Video Player</h1>
 
-</div>
 
-</header>
+        <input
+            type="text"
+            id="videoLink"
+            placeholder="YouTube yoki VK Video linkini kiriting..."
+        >
 
-<section id="adminPanel" class="admin-panel">
 
-<h2>🔐 Admin Panel</h2>
+        <button onclick="playVideo()">
 
-<input
-id="liveName"
-type="text"
-placeholder="Live title"
->
+            ▶️ Videoni ko‘rish
 
-<input
-id="liveLink"
-type="text"
-placeholder="VK Video link"
->
+        </button>
 
-<button
-id="publishButton"
-class="publish-btn"
->
 
-🔴 Publish Live
+        <div
+            id="error"
+            class="error">
+        </div>
 
-</button>
 
-</section>
+        <div
+            id="videoBox"
+            class="video-box">
 
-<main id="content">
 
-<div class="loading">
+            <iframe
+                id="videoPlayer"
+                allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                allowfullscreen>
+            </iframe>
 
-Loading...
 
-</div>
+            <button
+                class="close-btn"
+                onclick="closeVideo()">
 
-</main>
+                ❌ Videoni yopish
 
-</div>
+            </button>
 
-<script type="module">
 
-import {
+        </div>
 
-initializeApp
 
-}
+    </div>
 
-from
 
-"https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+<script>
 
 
-import {
+    // Telegram Mini App
+    if (window.Telegram && window.Telegram.WebApp) {
 
-getFirestore,
+        const tg =
+            window.Telegram.WebApp;
 
-collection,
+        tg.ready();
 
-addDoc,
+        tg.expand();
 
-deleteDoc,
+    }
 
-doc,
 
-onSnapshot
+    // ==============================
+    // VIDEONI OCHISH
+    // ==============================
 
-}
+    function playVideo() {
 
-from
 
-"https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+        const link =
+            document
+            .getElementById("videoLink")
+            .value
+            .trim();
 
 
-const firebaseConfig = {
+        const error =
+            document
+            .getElementById("error");
 
-apiKey:
 
-"AIzaSyCNyFkMtsV8nqZSOdLFbHZMSNE5wQgKGa0",
+        const player =
+            document
+            .getElementById("videoPlayer");
 
-authDomain:
 
-"f1exploretv.firebaseapp.com",
+        const videoBox =
+            document
+            .getElementById("videoBox");
 
-projectId:
 
-"f1exploretv",
+        error.innerText = "";
 
-storageBucket:
 
-"f1exploretv.firebasestorage.app",
+        if (!link) {
 
-messagingSenderId:
+            error.innerText =
+                "Iltimos, video linkini kiriting!";
 
-"930316875177",
+            return;
 
-appId:
+        }
 
-"1:930316875177:web:e13a5ac9ba085f6d3680b8"
 
-};
+        // ==============================
+        // YOUTUBE
+        // ==============================
 
+        if (
+            link.includes("youtube.com") ||
+            link.includes("youtu.be")
+        ) {
 
-const firebaseApp =
 
-initializeApp(
+            const youtubeId =
+                getYouTubeId(link);
 
-firebaseConfig
 
-);
+            if (!youtubeId) {
 
+                error.innerText =
+                    "YouTube link noto‘g‘ri!";
 
-const db =
+                return;
 
-getFirestore(
+            }
 
-firebaseApp
 
-);
+            player.src =
+                "https://www.youtube.com/embed/"
+                + youtubeId
+                + "?autoplay=1";
 
 
-const telegram =
+            videoBox.style.display =
+                "block";
 
-window.Telegram.WebApp;
 
+            return;
 
-telegram.ready();
+        }
 
 
-telegram.expand();
+        // ==============================
+        // VK VIDEO
+        // ==============================
 
+        if (
+            link.includes("vkvideo.ru/video") ||
+            link.includes("vk.com/video")
+        ) {
 
-const ADMIN_ID =
 
-2066322228;
+            const vkData =
+                getVKVideoId(link);
 
 
-const BOT_LINK =
+            if (!vkData) {
 
-"https://t.me/F1ExploreBot";
+                error.innerText =
+                    "VK Video link noto‘g‘ri!";
 
+                return;
 
-const REPORT_LINK =
+            }
 
-"https://t.me/aslbek201";
 
+            /*
+                Masalan:
 
-const telegramUser =
+                https://vkvideo.ru/video-575426_456240985
 
-telegram.initDataUnsafe?.user;
+                oid = -575426
+                id  = 456240985
+            */
 
 
-const isAdmin =
+            player.src =
+                "https://vkvideo.ru/video_ext.php"
+                + "?oid="
+                + vkData.oid
+                + "&id="
+                + vkData.id
+                + "&autoplay=1";
 
-telegramUser &&
 
-Number(
+            videoBox.style.display =
+                "block";
 
-telegramUser.id
 
-) === ADMIN_ID;
+            return;
 
+        }
 
-if (isAdmin) {
 
-document
+        // ==============================
+        // VK CLIP
+        // ==============================
 
-.getElementById(
+        if (
+            link.includes("vkvideo.ru/clip") ||
+            link.includes("vk.com/clip")
+        ) {
 
-"adminPanel"
 
-)
+            const vkData =
+                getVKVideoId(link);
 
-.style.display =
 
-"block";
+            if (!vkData) {
 
-}
+                error.innerText =
+                    "VK Clip link noto‘g‘ri!";
 
+                return;
 
-document
+            }
 
-.getElementById(
 
-"publishButton"
+            player.src =
+                "https://vkvideo.ru/video_ext.php"
+                + "?oid="
+                + vkData.oid
+                + "&id="
+                + vkData.id
+                + "&autoplay=1";
 
-)
 
-.addEventListener(
+            videoBox.style.display =
+                "block";
 
-"click",
 
-async function() {
+            return;
 
+        }
 
-const title =
 
-document
+        error.innerText =
+            "Bu link turi qo‘llab-quvvatlanmaydi.";
 
-.getElementById(
+    }
 
-"liveName"
 
-)
+    // ==============================
+    // YOUTUBE VIDEO ID
+    // ==============================
 
-.value
+    function getYouTubeId(url) {
 
-.trim();
 
+        let match;
 
-const link =
 
-document
+        // youtube.com/watch?v=...
+        match =
+            url.match(
+                /youtube\.com\/watch\?v=([^&]+)/i
+            );
 
-.getElementById(
 
-"liveLink"
+        if (match) {
 
-)
+            return match[1];
 
-.value
+        }
 
-.trim();
 
+        // youtu.be/...
+        match =
+            url.match(
+                /youtu\.be\/([^?&]+)/i
+            );
 
-if (
 
-title === "" ||
+        if (match) {
 
-link === ""
+            return match[1];
 
-) {
+        }
 
-alert(
 
-"Please enter the live title and link."
+        // youtube.com/shorts/...
+        match =
+            url.match(
+                /youtube\.com\/shorts\/([^?&]+)/i
+            );
 
-);
 
-return;
+        if (match) {
 
-}
+            return match[1];
 
+        }
 
-try {
 
+        // youtube.com/live/...
+        match =
+            url.match(
+                /youtube\.com\/live\/([^?&]+)/i
+            );
 
-await addDoc(
 
-collection(
+        if (match) {
 
-db,
+            return match[1];
 
-"lives"
+        }
 
-),
 
-{
+        return null;
 
-title:
+    }
 
-title,
 
-link:
+    // ==============================
+    // VK VIDEO ID
+    // ==============================
 
-link,
+    function getVKVideoId(url) {
 
-createdAt:
 
-Date.now()
+        let match;
 
-}
 
-);
+        /*
+            Qo‘llab-quvvatlanadigan formatlar:
 
+            vkvideo.ru/video-575426_456240985
 
-document
+            vk.com/video-575426_456240985
 
-.getElementById(
+            vkvideo.ru/video575426_456240985
 
-"liveName"
+            vk.com/video575426_456240985
+        */
 
-)
 
-.value = "";
+        match =
+            url.match(
+                /(?:vkvideo\.ru|vk\.com)\/(?:video|clip)(-?\d+)_(\d+)/i
+            );
 
 
-document
+        if (!match) {
 
-.getElementById(
+            return null;
 
-"liveLink"
+        }
 
-)
 
-.value = "";
+        let ownerId =
+            match[1];
 
 
-alert(
+        let videoId =
+            match[2];
 
-"Live published successfully!"
 
-);
+        // VK group ID uchun minus kerak
+        if (
+            !ownerId.startsWith("-")
+        ) {
 
+            ownerId =
+                "-" + ownerId;
 
-}
+        }
 
-catch (
 
-error
+        return {
 
-) {
+            oid: ownerId,
 
+            id: videoId
 
-console.error(
+        };
 
-error
+    }
 
-);
 
+    // ==============================
+    // VIDEONI YOPISH
+    // ==============================
 
-alert(
+    function closeVideo() {
 
-"Firebase error: "
 
-+
+        const player =
+            document
+            .getElementById("videoPlayer");
 
-error.message
 
-);
+        const videoBox =
+            document
+            .getElementById("videoBox");
 
 
-}
+        player.src =
+            "";
 
-}
 
-);
+        videoBox.style.display =
+            "none";
 
+    }
 
-onSnapshot(
 
-collection(
+    // ==============================
+    // ENTER TUGMASI
+    // ==============================
 
-db,
+    document
+        .getElementById("videoLink")
+        .addEventListener(
+            "keydown",
+            function(event) {
 
-"lives"
 
-),
+                if (
+                    event.key === "Enter"
+                ) {
 
-function(snapshot) {
+                    playVideo();
 
+                }
 
-const content =
-
-document
-
-.getElementById(
-
-"content"
-
-);
-
-
-content.innerHTML = "";
-
-
-if (
-
-snapshot.empty
-
-) {
-
-
-content.innerHTML = `
-
-<div class="race-soon">
-
-<h1>
-
-Race Starts Soon 🏁
-
-</h1>
-
-<p>
-
-Stay tuned for the next live race.
-
-</p>
-
-</div>
-
-`;
-
-
-return;
-
-}
-
-
-snapshot.forEach(
-
-function(
-
-documentSnapshot
-
-) {
-
-
-const live =
-
-documentSnapshot
-
-.data();
-
-
-const liveId =
-
-documentSnapshot
-
-.id;
-
-
-const card =
-
-document
-
-.createElement(
-
-"div"
-
-);
-
-
-card
-
-.className =
-
-"live-card";
-
-
-card.innerHTML = `
-
-<iframe
-
-class="player"
-
-src="${live.link}"
-
-allow="autoplay; fullscreen"
-
-allowfullscreen>
-
-</iframe>
-
-<div class="live-info">
-
-<div class="live-title">
-
-🔴 ${escapeHTML(
-
-live.title
-
-)}
-
-</div>
-
-<div class="actions">
-
-<button
-
-class="action-btn"
-
-onclick="likeLive(this)"
-
->
-
-👍 Like
-
-</button>
-
-<button
-
-class="action-btn"
-
-onclick="dislikeLive(this)"
-
->
-
-👎 Dislike
-
-</button>
-
-<button
-
-class="action-btn"
-
-onclick="shareLive()"
-
->
-
-🔗 Share
-
-</button>
-
-</div>
-
-<button
-
-class="report-btn"
-
-onclick="reportLive()"
-
->
-
-🚨 Report
-
-</button>
-
-</div>
-
-`;
-
-
-if (
-
-isAdmin
-
-) {
-
-
-const deleteButton =
-
-document
-
-.createElement(
-
-"button"
-
-);
-
-
-deleteButton
-
-.className =
-
-"delete-btn";
-
-
-deleteButton
-
-.innerText =
-
-"🗑 Delete Live";
-
-
-deleteButton.onclick =
-
-async function() {
-
-
-await deleteDoc(
-
-doc(
-
-db,
-
-"lives",
-
-liveId
-
-)
-
-);
-
-
-};
-
-
-card
-
-.querySelector(
-
-".live-info"
-
-)
-
-.appendChild(
-
-deleteButton
-
-);
-
-
-}
-
-
-content
-
-.appendChild(
-
-card
-
-);
-
-
-}
-
-);
-
-
-},
-
-function(error) {
-
-
-console.error(
-
-error
-
-);
-
-
-document
-
-.getElementById(
-
-"content"
-
-)
-
-.innerHTML = `
-
-<div class="error">
-
-<h2>
-
-Firebase Error
-
-</h2>
-
-<br>
-
-<p>
-
-${escapeHTML(
-
-error.message
-
-)}
-
-</p>
-
-</div>
-
-`;
-
-
-}
-
-);
-
-
-window.likeLive =
-
-function(button) {
-
-
-button
-
-.classList
-
-.toggle(
-
-"active"
-
-);
-
-
-button
-
-.parentElement
-
-.children[1]
-
-.classList
-
-.remove(
-
-"active"
-
-);
-
-
-};
-
-
-window.dislikeLive =
-
-function(button) {
-
-
-button
-
-.classList
-
-.toggle(
-
-"active"
-
-);
-
-
-button
-
-.parentElement
-
-.children[0]
-
-.classList
-
-.remove(
-
-"active"
-
-);
-
-
-};
-
-
-window.shareLive =
-
-async function() {
-
-
-try {
-
-
-await navigator
-
-.clipboard
-
-.writeText(
-
-BOT_LINK
-
-);
-
-
-alert(
-
-"Bot link copied!"
-
-);
-
-
-}
-
-catch (
-
-error
-
-) {
-
-
-alert(
-
-BOT_LINK
-
-);
-
-
-}
-
-
-};
-
-
-window.reportLive =
-
-function() {
-
-
-window
-
-.open(
-
-REPORT_LINK,
-
-"_blank"
-
-);
-
-
-};
-
-
-function escapeHTML(
-
-text
-
-) {
-
-
-return String(
-
-text
-
-)
-
-.replace(
-
-/&/g,
-
-"&amp;"
-
-)
-
-.replace(
-
-/</g,
-
-"&lt;"
-
-)
-
-.replace(
-
-/>/g,
-
-"&gt;"
-
-)
-
-.replace(
-
-/"/g,
-
-"&quot;"
-
-)
-
-.replace(
-
-/'/g,
-
-"&#039;"
-
-);
-
-
-}
+            }
+        );
 
 
 </script>
 
+
 </body>
 
-</html> 
+</html>
