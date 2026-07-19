@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Video Player</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>F1.Explore</title>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -19,76 +22,106 @@
         }
 
         body {
-            background: #101010;
+
+            background: #250000;
+
             color: white;
-            padding: 20px;
+
+            width: 100vw;
+
+            height: 100vh;
+
+            overflow: hidden;
+
         }
 
-        .container {
-            max-width: 700px;
-            margin: auto;
+        .app {
+
+            width: 100vw;
+
+            height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            position: relative;
+
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 25px;
+        .brand {
+
+            position: fixed;
+
+            top: 18px;
+
+            right: 22px;
+
+            color: #ff3333;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            z-index: 100;
+
         }
 
-        input {
-            width: 100%;
-            padding: 16px;
+        .play-button {
+
+            background: #b00000;
+
+            color: white;
+
             border: none;
-            outline: none;
-            border-radius: 10px;
-            background: #242424;
-            color: white;
-            font-size: 15px;
-        }
 
-        button {
-            width: 100%;
-            padding: 16px;
-            margin-top: 12px;
-            border: none;
-            border-radius: 10px;
-            background: #229ed9;
-            color: white;
-            font-size: 16px;
+            border-radius: 12px;
+
+            padding: 18px 45px;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
             cursor: pointer;
+
         }
 
-        button:hover {
-            opacity: 0.8;
+        .play-button:active {
+
+            transform: scale(0.96);
+
         }
 
         .video-box {
+
             display: none;
-            margin-top: 25px;
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100vw;
+
+            height: 100vh;
+
+            background: black;
+
+            z-index: 50;
+
         }
 
         iframe {
+
             width: 100%;
-            height: 400px;
+
+            height: 100%;
+
             border: none;
-            border-radius: 15px;
-            background: black;
-        }
-
-        .error {
-            color: #ff5555;
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .close-btn {
-            background: #333;
-        }
-
-        @media (max-width: 600px) {
-
-            iframe {
-                height: 230px;
-            }
 
         }
 
@@ -100,51 +133,43 @@
 <body>
 
 
-    <div class="container">
+    <div class="app" id="app">
 
 
-        <h1>🎬 Video Player</h1>
+        <div class="brand">
+
+            F1.Explore
+
+        </div>
 
 
-        <input
-            type="text"
-            id="videoLink"
-            placeholder="YouTube yoki VK Video linkini kiriting..."
-        >
+        <button
 
+            class="play-button"
 
-        <button onclick="playVideo()">
+            id="playButton">
 
-            ▶️ Videoni ko‘rish
+            ▶ PLAY
 
         </button>
 
 
         <div
-            id="error"
-            class="error">
-        </div>
 
+            class="video-box"
 
-        <div
-            id="videoBox"
-            class="video-box">
+            id="videoBox">
 
 
             <iframe
+
                 id="videoPlayer"
+
                 allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+
                 allowfullscreen>
+
             </iframe>
-
-
-            <button
-                class="close-btn"
-                onclick="closeVideo()">
-
-                ❌ Videoni yopish
-
-            </button>
 
 
         </div>
@@ -157,10 +182,19 @@
 
 
     // Telegram Mini App
-    if (window.Telegram && window.Telegram.WebApp) {
+
+    if (
+
+        window.Telegram &&
+
+        window.Telegram.WebApp
+
+    ) {
 
         const tg =
+
             window.Telegram.WebApp;
+
 
         tg.ready();
 
@@ -169,371 +203,138 @@
     }
 
 
-    // ==============================
-    // VIDEONI OCHISH
-    // ==============================
-
-    function playVideo() {
-
-
-        const link =
-            document
-            .getElementById("videoLink")
-            .value
-            .trim();
-
-
-        const error =
-            document
-            .getElementById("error");
-
-
-        const player =
-            document
-            .getElementById("videoPlayer");
-
-
-        const videoBox =
-            document
-            .getElementById("videoBox");
-
-
-        error.innerText = "";
-
-
-        if (!link) {
-
-            error.innerText =
-                "Iltimos, video linkini kiriting!";
-
-            return;
-
-        }
-
-
-        // ==============================
-        // YOUTUBE
-        // ==============================
-
-        if (
-            link.includes("youtube.com") ||
-            link.includes("youtu.be")
-        ) {
-
-
-            const youtubeId =
-                getYouTubeId(link);
-
-
-            if (!youtubeId) {
-
-                error.innerText =
-                    "YouTube link noto‘g‘ri!";
-
-                return;
-
-            }
-
-
-            player.src =
-                "https://www.youtube.com/embed/"
-                + youtubeId
-                + "?autoplay=1";
-
-
-            videoBox.style.display =
-                "block";
-
-
-            return;
-
-        }
-
-
-        // ==============================
-        // VK VIDEO
-        // ==============================
-
-        if (
-            link.includes("vkvideo.ru/video") ||
-            link.includes("vk.com/video")
-        ) {
-
-
-            const vkData =
-                getVKVideoId(link);
-
-
-            if (!vkData) {
-
-                error.innerText =
-                    "VK Video link noto‘g‘ri!";
-
-                return;
-
-            }
-
-
-            /*
-                Masalan:
-
-                https://vkvideo.ru/video-575426_456240985
-
-                oid = -575426
-                id  = 456240985
-            */
-
-
-            player.src =
-                "https://vkvideo.ru/video_ext.php"
-                + "?oid="
-                + vkData.oid
-                + "&id="
-                + vkData.id
-                + "&autoplay=1";
-
-
-            videoBox.style.display =
-                "block";
-
-
-            return;
-
-        }
-
-
-        // ==============================
-        // VK CLIP
-        // ==============================
-
-        if (
-            link.includes("vkvideo.ru/clip") ||
-            link.includes("vk.com/clip")
-        ) {
-
-
-            const vkData =
-                getVKVideoId(link);
-
-
-            if (!vkData) {
-
-                error.innerText =
-                    "VK Clip link noto‘g‘ri!";
-
-                return;
-
-            }
-
-
-            player.src =
-                "https://vkvideo.ru/video_ext.php"
-                + "?oid="
-                + vkData.oid
-                + "&id="
-                + vkData.id
-                + "&autoplay=1";
-
-
-            videoBox.style.display =
-                "block";
-
-
-            return;
-
-        }
-
-
-        error.innerText =
-            "Bu link turi qo‘llab-quvvatlanmaydi.";
-
-    }
-
-
-    // ==============================
-    // YOUTUBE VIDEO ID
-    // ==============================
-
-    function getYouTubeId(url) {
-
-
-        let match;
-
-
-        // youtube.com/watch?v=...
-        match =
-            url.match(
-                /youtube\.com\/watch\?v=([^&]+)/i
-            );
-
-
-        if (match) {
-
-            return match[1];
-
-        }
-
-
-        // youtu.be/...
-        match =
-            url.match(
-                /youtu\.be\/([^?&]+)/i
-            );
-
-
-        if (match) {
-
-            return match[1];
-
-        }
-
-
-        // youtube.com/shorts/...
-        match =
-            url.match(
-                /youtube\.com\/shorts\/([^?&]+)/i
-            );
-
-
-        if (match) {
-
-            return match[1];
-
-        }
-
-
-        // youtube.com/live/...
-        match =
-            url.match(
-                /youtube\.com\/live\/([^?&]+)/i
-            );
-
-
-        if (match) {
-
-            return match[1];
-
-        }
-
-
-        return null;
-
-    }
-
-
-    // ==============================
-    // VK VIDEO ID
-    // ==============================
-
-    function getVKVideoId(url) {
-
-
-        let match;
-
-
-        /*
-            Qo‘llab-quvvatlanadigan formatlar:
-
-            vkvideo.ru/video-575426_456240985
-
-            vk.com/video-575426_456240985
-
-            vkvideo.ru/video575426_456240985
-
-            vk.com/video575426_456240985
-        */
-
-
-        match =
-            url.match(
-                /(?:vkvideo\.ru|vk\.com)\/(?:video|clip)(-?\d+)_(\d+)/i
-            );
-
-
-        if (!match) {
-
-            return null;
-
-        }
-
-
-        let ownerId =
-            match[1];
-
-
-        let videoId =
-            match[2];
-
-
-        // VK group ID uchun minus kerak
-        if (
-            !ownerId.startsWith("-")
-        ) {
-
-            ownerId =
-                "-" + ownerId;
-
-        }
-
-
-        return {
-
-            oid: ownerId,
-
-            id: videoId
-
-        };
-
-    }
-
-
-    // ==============================
-    // VIDEONI YOPISH
-    // ==============================
-
-    function closeVideo() {
-
-
-        const player =
-            document
-            .getElementById("videoPlayer");
-
-
-        const videoBox =
-            document
-            .getElementById("videoBox");
-
-
-        player.src =
-            "";
-
-
-        videoBox.style.display =
-            "none";
-
-    }
-
-
-    // ==============================
-    // ENTER TUGMASI
-    // ==============================
+    // PLAY BUTTON
 
     document
-        .getElementById("videoLink")
+
+        .getElementById("playButton")
+
         .addEventListener(
-            "keydown",
-            function(event) {
+
+            "click",
+
+            async function () {
 
 
-                if (
-                    event.key === "Enter"
-                ) {
+                const player =
 
-                    playVideo();
+                    document
+
+                    .getElementById(
+
+                        "videoPlayer"
+
+                    );
+
+
+                const videoBox =
+
+                    document
+
+                    .getElementById(
+
+                        "videoBox"
+
+                    );
+
+
+                const app =
+
+                    document
+
+                    .getElementById(
+
+                        "app"
+
+                    );
+
+
+                // VK VIDEO
+
+                player.src =
+
+                    "https://vkvideo.ru/video_ext.php"
+
+                    + "?oid=-226252875"
+
+                    + "&id=456239669"
+
+                    + "&autoplay=1";
+
+
+                // Video ko‘rsatish
+
+                videoBox.style.display =
+
+                    "block";
+
+
+                // Fullscreen
+
+                try {
+
+
+                    if (
+
+                        app.requestFullscreen
+
+                    ) {
+
+                        await app.requestFullscreen();
+
+                    }
+
 
                 }
 
+                catch (error) {
+
+                    console.log(
+
+                        "Fullscreen is not supported"
+
+                    );
+
+                }
+
+
+                // Landscape
+
+                try {
+
+
+                    if (
+
+                        screen.orientation &&
+
+                        screen.orientation.lock
+
+                    ) {
+
+                        await screen.orientation.lock(
+
+                            "landscape"
+
+                        );
+
+                    }
+
+
+                }
+
+                catch (error) {
+
+                    console.log(
+
+                        "Landscape is not supported"
+
+                    );
+
+                }
+
+
             }
+
         );
 
 
