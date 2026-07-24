@@ -1,346 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="uz">
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>F1.Explore</title>
-
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VK Live Player</title>
     <style>
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            background-color: #000;
         }
-
-        body {
-
-            background: #250000;
-
-            color: white;
-
-            width: 100vw;
-
-            height: 100vh;
-
-            overflow: hidden;
-
-        }
-
-        .app {
-
-            width: 100vw;
-
-            height: 100vh;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            position: relative;
-
-        }
-
-        .brand {
-
-            position: fixed;
-
-            top: 18px;
-
-            right: 22px;
-
-            color: #ff3333;
-
-            font-size: 20px;
-
-            font-weight: bold;
-
-            z-index: 100;
-
-        }
-
-        .play-button {
-
-            background: #b00000;
-
-            color: white;
-
-            border: none;
-
-            border-radius: 12px;
-
-            padding: 18px 45px;
-
-            font-size: 20px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-
-        }
-
-        .play-button:active {
-
-            transform: scale(0.96);
-
-        }
-
-        .video-box {
-
-            display: none;
-
-            position: fixed;
-
-            top: 0;
-
-            left: 0;
-
-            width: 100vw;
-
-            height: 100vh;
-
-            background: black;
-
-            z-index: 50;
-
-        }
-
-        iframe {
-
+        body, html {
             width: 100%;
-
             height: 100%;
-
-            border: none;
-
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
-
 </head>
-
-
 <body>
 
-
-    <div class="app" id="app">
-
-
-        <div class="brand">
-
-            F1.Explore
-
-        </div>
-
-
-        <button
-
-            class="play-button"
-
-            id="playButton">
-
-            ▶ PLAY
-
-        </button>
-
-
-        <div
-
-            class="video-box"
-
-            id="videoBox">
-
-
-            <iframe
-
-                id="videoPlayer"
-
-                allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-
-                allowfullscreen>
-
-            </iframe>
-
-
-        </div>
-
-
-    </div>
-
-
-<script>
-
-
-    // Telegram Mini App
-
-    if (
-
-        window.Telegram &&
-
-        window.Telegram.WebApp
-
-    ) {
-
-        const tg =
-
-            window.Telegram.WebApp;
-
-
-        tg.ready();
-
-        tg.expand();
-
-    }
-
-
-    // PLAY BUTTON
-
-    document
-
-        .getElementById("playButton")
-
-        .addEventListener(
-
-            "click",
-
-            async function () {
-
-
-                const player =
-
-                    document
-
-                    .getElementById(
-
-                        "videoPlayer"
-
-                    );
-
-
-                const videoBox =
-
-                    document
-
-                    .getElementById(
-
-                        "videoBox"
-
-                    );
-
-
-                const app =
-
-                    document
-
-                    .getElementById(
-
-                        "app"
-
-                    );
-
-
-                // VK VIDEO
-
-                player.src =
-
-                    "https://vkvideo.ru/video_ext.php"
-
-                    + "?oid=-226252875"
-
-                    + "&id=456239669"
-
-                    + "&autoplay=1";
-
-
-                // Video ko‘rsatish
-
-                videoBox.style.display =
-
-                    "block";
-
-
-                // Fullscreen
-
-                try {
-
-
-                    if (
-
-                        app.requestFullscreen
-
-                    ) {
-
-                        await app.requestFullscreen();
-
-                    }
-
-
-                }
-
-                catch (error) {
-
-                    console.log(
-
-                        "Fullscreen is not supported"
-
-                    );
-
-                }
-
-
-                // Landscape
-
-                try {
-
-
-                    if (
-
-                        screen.orientation &&
-
-                        screen.orientation.lock
-
-                    ) {
-
-                        await screen.orientation.lock(
-
-                            "landscape"
-
-                        );
-
-                    }
-
-
-                }
-
-                catch (error) {
-
-                    console.log(
-
-                        "Landscape is not supported"
-
-                    );
-
-                }
-
-
-            }
-
-        );
-
-
-</script>
-
+    <!-- VK Video Live Stream Pleeri -->
+    <iframe 
+        src="https://vk.com/video_ext.php?oid=-52620949&id=456301373&autoplay=1" 
+        allow="autoplay; encrypted-media; fullscreen; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
 
 </body>
-
 </html>
