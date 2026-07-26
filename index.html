@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>F1 Explore</title>
+    <title>F1 Explore - Live Race Day</title>
+    <!-- VK Video Player SDK -->
+    <script src="https://vk.com/js/api/videoplayer.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,7 +16,7 @@
         }
 
         body {
-            background-color: #000000;
+            background-color: #0f0f0f;
             color: #ffffff;
             display: flex;
             justify-content: center;
@@ -22,19 +24,18 @@
             overflow-y: auto;
         }
 
-        /* Telegram WebApp va barcha qurilmalar uchun moslashuvchan konteyner */
+        /* Telegram WebApp uchun konteyner */
         .app-wrapper {
             width: 100%;
             max-width: 650px;
             display: flex;
             flex-direction: column;
-            /* Telegram bot tepasidagi tugmalar uchun xavfsiz joy */
-            padding-top: 50px; 
+            padding-top: 55px; /* Telegram bot top-bar uchun xavfsiz joy */
             background-color: #0f0f0f;
             min-height: 100vh;
         }
 
-        /* 1. STICKY VIDEO PLAYER (Scroll qilganda joyida qoladi) */
+        /* 1. STICKY PLAYER (Scroll qilganda joyida qoladi) */
         .player-container {
             position: sticky;
             top: 0;
@@ -42,7 +43,7 @@
             width: 100%;
             aspect-ratio: 16 / 9;
             background-color: #000000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9);
         }
 
         .player-container iframe {
@@ -61,18 +62,18 @@
 
         /* VIDEO NOMI */
         .video-title {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
             line-height: 1.4;
             color: #f1f1f1;
         }
 
-        /* PROFIL / INSTAGRAM SECTION */
+        /* PROFIL VA FOLLOW TUGMASI */
         .channel-section {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 4px 0;
         }
 
         .channel-info {
@@ -81,30 +82,29 @@
             gap: 12px;
         }
 
-        /* 2-rasmdagi F1 logosini dumaloq avatar shakli */
+        /* F1 Logo Avatar */
         .avatar {
             width: 44px;
             height: 44px;
             border-radius: 50%;
             object-fit: cover;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            background-color: #1a0507;
+            background-color: #e10600;
         }
 
         .channel-name {
             font-size: 1rem;
             font-weight: 700;
             color: #ffffff;
-            text-decoration: none;
         }
 
-        /* FOLLOW BUTTON (Instagram link) */
+        /* INSTAGRAM FOLLOW TUGMASI */
         .follow-btn {
-            background-color:red ;
-            color: white;
+            background-color: #ffffff;
+            color: #0f0f0f;
             font-weight: 700;
             font-size: 0.85rem;
-            padding: 8px 16px;
+            padding: 8px 18px;
             border-radius: 20px;
             text-decoration: none;
             transition: transform 0.2s, background-color 0.2s;
@@ -126,18 +126,17 @@
         }
 
         .hashtag-chip {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: pink;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #3ea6ff;
             font-size: 0.8rem;
             font-weight: 600;
             padding: 6px 12px;
             border-radius: 8px;
-            text-decoration: none;
         }
 
         /* DESCRIPTION BOX */
         .description-box {
-            background-color: #390000;
+            background-color: #272727;
             border-radius: 12px;
             padding: 14px;
             font-size: 0.9rem;
@@ -146,7 +145,7 @@
             white-space: pre-line;
         }
 
-        /* TV VA KATTA EKRANLAR UCHUN MEDIA QUERY */
+        /* TV VA KATTA EKRANLAR UCHUN */
         @media (min-width: 768px) {
             .app-wrapper {
                 padding-top: 20px;
@@ -161,32 +160,31 @@
 
     <div class="app-wrapper">
 
-        <!-- 1. VIDEO PLAYER (STICKY) -->
+        <!-- 1. STICKY VIDEO PLAYER -->
         <div class="player-container">
+            <!-- VK Video Rasmiy Player iframe -->
             <iframe 
-    src="https://vk.com/video_ext.php?oid=-226252875&id=456239678&hash=SHU_YERDAGA_HASH_KODI&autoplay=1" 
-    allow="autoplay; encrypted-media; fullscreen; picture-in-picture" 
-    allowfullscreen>
-</iframe>
-
-
+                id="vk-player"
+                src="https://vk.com/video_ext.php?oid=-226252875&id=456239678&autoplay=1" 
+                allow="autoplay; encrypted-media; fullscreen; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
         </div>
 
-        <!-- 2. SCROLL BO'LADIGAN MA'LUMOTLAR -->
+        <!-- 2. SCROLL BO'LADIGAN QISM -->
         <div class="content-scrollable">
 
             <!-- ========================================== -->
-            <!-- ✏️ VIDEO NOMI (SHU YERGA YOZING) -->
+            <!-- ✏️ VIDEO NOMI (O'ZINGIZ UCHUN OCHIQ JOI) -->
             <!-- ========================================== -->
             <h1 class="video-title">
-                Formula 1 Hungarian Grand Prix 2026 — Live Main Race 🏁 
+                🔴 FORMULA 1 RACE DAY — Live Stream & Commentary
             </h1>
 
-            <!-- PROFIL VA FOLLOW TUGMASI -->
+            <!-- PROFIL SECTION -->
             <div class="channel-section">
                 <div class="channel-info">
-                    <!-- Dumaloq F1 Avatar (2-rasm) -->
-                    <img src="https://i.ibb.co/L6S9s44/f1-logo.jpg" alt="F1 Explore" class="avatar" id="avatar-img">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Explore" class="avatar">
                     <span class="channel-name">@F1.Explore</span>
                 </div>
                 <!-- Instagram Link -->
@@ -202,39 +200,22 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- ✏️ VIDEO DESCRIPTION (SHU YERGA YOZING) -->
+            <!-- ✏️ DESCRIPTION (O'ZINGIZ UCHUN OCHIQ JOI) -->
             <!-- ========================================== -->
             <div class="description-box">
-                🏁 LIVE | Formula 1 Hungarian Grand Prix 2026 – Race | Hungaroring
+                🏎 Race Day Jonli Translyatsiyasiga xush kelibsiz!
 
-Welcome to the F1 Explore live stream!
+                Bugungi poyga tafsilotlari va eng qiziqarli vaziyatlarni F1 Explore kanali bilan birga kuzatib boring.
 
-Watch the Race session of the 2026 Formula 1 Hungarian Grand Prix at the legendary Hungaroring. Teams and drivers begin preparing their cars for one of the most technical circuits on the F1 calendar.
+                📍 Trassa: Hungaroring
+                🔴 Sifat: Full HD Live
 
-🔥 What to expect:
-• Live FP1 coverage
-• Driver performances
-• Team strategies
-• Lap times and track action
-• Weekend preparation for Qualifying & Race
-
-👍 If you enjoy the stream, don't forget to:
-• Like the stream
-• Subscribe to F1 Explore
-• Turn on notifications so you never miss Formula 1 action!
-
-#F1 #HungarianGP #FP1 #Formula1 #Hungaroring #F1Live #CharlesLeclerc #LewisHamilton #MaxVerstappen #LandoNorris #OscarPiastri #GeorgeRussell #Ferrari #McLaren #Mercedes #RedBullRacing
+                Instagram sahifamizga o'tib obuna bo'lishni unutmang!
             </div>
 
         </div>
 
     </div>
 
-    <script>
-        // Rasm yuklanmay qolsa zaxira avatar
-        document.getElementById('avatar-img').onerror = function() {
-            this.src = 'https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg';
-        };
-    </script>
 </body>
 </html>
